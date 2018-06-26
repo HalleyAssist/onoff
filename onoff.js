@@ -109,7 +109,7 @@ class Gpio {
         }
 
         try {
-          if(fs.readFileSync(this._gpioPath + 'direction') != direction){
+          if(fs.readFileSync(this._gpioPath + 'direction') != direction + "\n"){
             fs.writeFileSync(this._gpioPath + 'direction', direction);
           }
         } catch (ignore) {
