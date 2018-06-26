@@ -68,6 +68,10 @@ class Gpio {
         }
       });
 
+      if (!!options.activeLow) {
+        fs.writeFileSync(this._gpioPath + 'active_low', HIGH_BUF);
+      }
+
       fs.writeFileSync(this._gpioPath + 'direction', direction);
 
       // On some systems writing to the edge file for an output GPIO will
@@ -75,10 +79,6 @@ class Gpio {
       // https://github.com/fivdi/onoff/issues/87
       if (edge && direction === 'in') {
         fs.writeFileSync(this._gpioPath + 'edge', edge);
-      }
-
-      if (!!options.activeLow) {
-        fs.writeFileSync(this._gpioPath + 'active_low', HIGH_BUF);
       }
     } else {
       // The pin has already been exported, perhaps by onoff itself, perhaps
@@ -93,10 +93,7 @@ class Gpio {
       // gpio utility can set both direction and edge. If there are any
       // errors while attempting to perform the modifications, just keep on
       // truckin'.
-      try {
-        fs.writeFileSync(this._gpioPath + 'direction', direction);
-      } catch (ignore) {
-      }
+      
       try {
         // On some systems writing to the edge file for an output GPIO will
         // result in an "EIO, i/o error"
@@ -108,6 +105,11 @@ class Gpio {
           fs.writeFileSync(this._gpioPath + 'active_low',
             !!options.activeLow ? HIGH_BUF : LOW_BUF
           );
+        } catch (ignore) {
+        }
+
+        try {
+          fs.writeFileSync(this._gpioPath + 'direction', direction);
         } catch (ignore) {
         }
       } catch (ignore) {
